@@ -36,7 +36,9 @@ footer {
 
 a {
   text-decoration: none;
-  color: rgb(73, 177, 237);
+  /* color: rgb(73, 177, 237); */
+  color: rgb(255, 60, 0);
+
   /* color: #fa980b; */
 }
 
@@ -90,4 +92,12 @@ button {
   /* font-weight: bold; */
   flex: 1;
   margin: 2px;
+}
+
+button:hover {
+  box-shadow: -1px -1px 2px #5c5656, 1px 1px 2px #5c5656;
+}
+
+button:active {
+  box-shadow: -1px -1px 7px #5c5656, 1px 1px 7px #5c5656;
 }
