@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&display=swap");
+
+body {
+  font-family: "Chakra Petch", sans-serif;
+  background-color: #d6d6d6;
+  margin: 2px;
+  height: 98vh;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+.page {
+  margin: auto;
+  /* width: 100%; */
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.calc-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  min-height: 70%;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: #fa980b;
+}
+
+.calc-display {
+  border-radius: 5px;
+  overflow-wrap: break-word;
+  font-size: 1.5em;
+  font-weight: bold;
+  background-color: #d6d6d6;
+  text-align: right;
+  padding: 10px;
+  align-self: stretch;
+  margin: 2px;
+  border: 1px solid gray;
+}
+
+.calc-buttons {
+  min-width: 100%;
+  flex: 1;
+  display: flex;
+}
+
+.btn-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+button {
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 1.5em;
+  font-weight: bold;
+  flex: 1;
+  margin: 2px;
+}
