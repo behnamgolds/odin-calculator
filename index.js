@@ -136,11 +136,13 @@ function isDisplayError() {
 
 function getDigit(e) {
   if (!allowEdit) {
+    // when there was a previous calculation, the allowEdit is set to false
     if (!isDisplayError()) pushNum();
     clearDisplay();
     allowEdit = true;
   }
-  appendDisplay(e.target.innerText);
+  if (e.type === "keydown") appendDisplay(e.key);
+  else appendDisplay(e.target.innerText);
 }
 
 function equals(e) {
@@ -160,8 +162,67 @@ function getBinaryOperator(e) {
   } else clearDisplay();
 }
 
+function getKey(e) {
+  console.log(e);
+  e.preventDefault();
+  if (isDisplayMaterial(e.key)) {
+    getDigit(e);
+  } else {
+    switch (e.key) {
+      case "Enter":
+        equals(e);
+        break;
+      case "Backspace":
+        backSpace(e);
+        break;
+      case "/":
+        divideBtn.click();
+        break;
+      case "*":
+        multiplyBtn.click();
+        break;
+      case "+":
+        addBtn.click();
+        break;
+      case "-":
+        subtractBtn.click();
+        break;
+      case "^":
+        powBtn.click();
+        break;
+      case "%":
+        moduloBtn.click();
+        break;
+      case "r":
+      case "R":
+        sqrtBtn.click();
+        break;
+      case "n":
+      case "N":
+        negateBtn.click();
+        break;
+      case "c":
+      case "C":
+        clearDisplay();
+        break;
+      case "a":
+      case "A":
+        clearDisplay();
+        break;
+    }
+  }
+}
+
 document.querySelector("#copyright-year").innerText = new Date().getFullYear();
 const display = document.querySelector(".calc-display");
+const divideBtn = document.querySelector("#divide");
+const multiplyBtn = document.querySelector("#multiply");
+const subtractBtn = document.querySelector("#subtract");
+const addBtn = document.querySelector("#add");
+const powBtn = document.querySelector("#pow");
+const moduloBtn = document.querySelector("#modulo");
+const sqrtBtn = document.querySelector("#sqrt");
+const negateBtn = document.querySelector("#negate");
 document
   .querySelectorAll(".binary-operator")
   .forEach((btn) => btn.addEventListener("click", getBinaryOperator));
@@ -178,3 +239,5 @@ document.querySelector("#backSpace").addEventListener("click", backSpace);
 document.querySelector("#clearDisplay").addEventListener("click", clearDisplay);
 document.querySelector("#resetCalc").addEventListener("click", resetCalc);
 document.querySelector("#equals").addEventListener("click", equals);
+
+document.addEventListener("keydown", getKey);
