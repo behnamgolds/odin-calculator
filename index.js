@@ -1,5 +1,10 @@
+// ! if display value is NaN (as a result of sqrt(-1)) pressing a digit changes the display value
+// ! to 0 , but then pressing a binary operator (e.g *) and a number (e.g 3) will not do the calculation
+// ! and still shows that digit (instead of 0 in this case).
+
 let numbers = [];
 let operator = [];
+let allowEdit = true;
 const unaryOperators = ["negate", "sqrt"];
 const legalDisplayMaterial = "0123456789.";
 const calculator = {
@@ -9,10 +14,10 @@ const calculator = {
   multiply(num1, num2) {
     return num1 * num2;
   },
-  plus(num1, num2) {
+  add(num1, num2) {
     return num1 + num2;
   },
-  minus(num1, num2) {
+  subtract(num1, num2) {
     return num1 - num2;
   },
   pow(num1, num2) {
@@ -22,16 +27,13 @@ const calculator = {
     return num1 % num2;
   },
   negate(num1) {
-    return -num1;
+    return Number.parseFloat(-num1);
   },
   sqrt(num1) {
     return Math.sqrt(num1);
   },
 };
 
-function equals() {
-  calculate();
-}
 function pushNum(num) {
   numbers.push(num);
   updateDisplay();
@@ -50,7 +52,8 @@ function getDisplayContent() {
   return Number.parseFloat(display.innerText);
 }
 function updateDisplay(result) {
-  if (result) display.innerText = result;
+  console.log(result);
+  if (typeof result != "undefined") display.innerText = result;
   else display.innerText = numbers[numbers.length - 1];
 }
 function clearDisplay() {
@@ -61,10 +64,14 @@ function clearDisplay() {
 function blankDisplay() {
   display.innerText = "";
 }
-function backSpace() {
-  if (display.innerText.length === 1) clearDisplay();
-  else display.innerText = display.innerText.slice(0, -1);
-  if (display.innerText === "-") clearDisplay();
+function backSpace(e) {
+  if (!isDisplayError()) {
+    if (display.innerText.length === 1 || !allowEdit) clearDisplay();
+    else {
+      display.innerText = display.innerText.slice(0, -1);
+      if (display.innerText === "-") clearDisplay();
+    }
+  }
 }
 function resetCalc() {
   clearDisplay();
@@ -72,7 +79,7 @@ function resetCalc() {
   operator = [];
   //   and remove any saved memory and previous calcs
 }
-function butifyDisplayNum() {
+function beautifyDisplayNum() {
   display.innerText = Number.parseFloat(display.innerText);
 }
 function appendDisplay(char) {
@@ -89,24 +96,21 @@ function isUnaryOperator(op) {
   return unaryOperators.includes(op);
 }
 
-function calculate() {
-  console.log(numbers);
-  if (numbers.length > 0 && operator.length > 0) {
+function calculateUnary(e) {
+  if (!isDisplayError()) {
+    updateDisplay(calculator[e.target.id](getDisplayContent()));
+  }
+}
+
+function calculateBinary() {
+  if (numbers.length === 2 && operator.length === 1) {
     let op = popOperator();
     let result;
     let num2 = popNum();
-    if (isUnaryOperator(op)) {
-      result = calculator[op](num2);
-    } else if (numbers.length > 0) {
-      let num1 = popNum();
-      console.log(num1 + " --- " + num2);
-      result = calculator[op](num1, num2);
-    } else {
-      result = num2;
-      pushNum(result);
-      pushOperator(op);
-    }
-    // pushNum(result);
+    let num1 = popNum();
+    console.log(num1 + " --- " + num2);
+    result = calculator[op](num1, num2);
+    allowEdit = false;
     updateDisplay(result);
     console.log(numbers);
   }
@@ -120,48 +124,46 @@ function isDisplayError() {
   return display.innerText === "NaN" || display.innerText === "Infinity";
 }
 
-function getKey(e) {
-  if (isDisplayMaterial(e.target.innerText)) {
-    // This does not push 0 if the first input key is an operator!
-    // like when you want to calculate 0 + 5 but you wont press 0 first because the
-    // display already contains 0, so you first press + and then 5.
-    if (operator.length > 0) {
-      clearDisplay();
-    }
-    appendDisplay(e.target.innerText);
-    return;
+function getDigit(e) {
+  if (!allowEdit) {
+    clearDisplay();
+    allowEdit = true;
   }
+  appendDisplay(e.target.innerText);
+}
 
-  switch (e.target.id) {
-    case "equals":
-      if (operator.length > 0) {
-        pushNum(getDisplayContent());
-        // calculate();
-      }
-      break;
-    case "backSpace":
-      backSpace();
-      break;
-    case "clearDisplay":
-      clearDisplay();
-      break;
-    case "resetCalc":
-      resetCalc();
-      break;
-    default:
-      if (!isDisplayError()) {
-        pushNum(getDisplayContent());
-        pushOperator(e.target.id);
-      } else clearDisplay();
+function equals(e) {
+  if (operator.length > 0) {
+    allowEdit = false;
+    pushNum(getDisplayContent());
+    calculateBinary();
   }
+}
 
-  calculate();
-  // if key is equals call calculate
-  // call calculate everytime anything other than numbers or dot got clicked
+function getBinaryOperator(e) {
+  if (!isDisplayError()) {
+    pushNum(getDisplayContent());
+    if (operator.length > 0) calculateBinary(); // change #1
+    pushOperator(e.target.id);
+    allowEdit = false;
+  } else clearDisplay();
 }
 
 document.querySelector("#copyright-year").innerText = new Date().getFullYear();
 const display = document.querySelector(".calc-display");
 document
-  .querySelectorAll("button")
-  .forEach((btn) => btn.addEventListener("click", getKey));
+  .querySelectorAll(".binary-operator")
+  .forEach((btn) => btn.addEventListener("click", getBinaryOperator));
+
+document
+  .querySelectorAll(".unary-operator")
+  .forEach((btn) => btn.addEventListener("click", calculateUnary));
+
+document
+  .querySelectorAll(".digit")
+  .forEach((btn) => btn.addEventListener("click", getDigit));
+
+document.querySelector("#backSpace").addEventListener("click", backSpace);
+document.querySelector("#clearDisplay").addEventListener("click", clearDisplay);
+document.querySelector("#resetCalc").addEventListener("click", resetCalc);
+document.querySelector("#equals").addEventListener("click", equals);
