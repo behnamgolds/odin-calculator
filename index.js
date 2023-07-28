@@ -2,10 +2,15 @@
 // ! to 0 , but then pressing a binary operator (e.g *) and a number (e.g 3) will not do the calculation
 // ! and still shows that digit (instead of 0 in this case).
 
+// fixed: can not calculate three consquetive calculations (without using = between them). could be the same
+//  as the previous bug?
+//  it seems that we lose the first binary operation's result when clicking the second binary operator.
+//  after one calculation and second input of a operator and at the third input of a number the getDigit
+//  function clears the screen, so the previous result is lost.
+
 let numbers = [];
 let operator = [];
 let allowEdit = true;
-const unaryOperators = ["negate", "sqrt"];
 const legalDisplayMaterial = "0123456789.";
 const calculator = {
   divide(num1, num2) {
@@ -34,36 +39,42 @@ const calculator = {
   },
 };
 
-function pushNum(num) {
-  numbers.push(num);
-  updateDisplay();
+function pushNum() {
+  numbers.push(getDisplayContent());
+  // updateDisplay();
   if (isDisplayError()) popNum();
 }
+
 function popNum() {
   return numbers.pop();
 }
+
 function pushOperator(op) {
+  operator.pop();
   operator.push(op);
 }
-function popOperator(op) {
+
+function popOperator() {
   return operator.pop();
 }
+
 function getDisplayContent() {
   return Number.parseFloat(display.innerText);
 }
+
 function updateDisplay(result) {
-  console.log(result);
   if (typeof result != "undefined") display.innerText = result;
   else display.innerText = numbers[numbers.length - 1];
 }
+
 function clearDisplay() {
   display.innerText = "0";
-  // numbers = [];
-  // operator = [];
 }
+
 function blankDisplay() {
   display.innerText = "";
 }
+
 function backSpace(e) {
   if (!isDisplayError()) {
     if (display.innerText.length === 1 || !allowEdit) clearDisplay();
@@ -73,15 +84,19 @@ function backSpace(e) {
     }
   }
 }
+
 function resetCalc() {
   clearDisplay();
   numbers = [];
   operator = [];
+  allowEdit = true;
   //   and remove any saved memory and previous calcs
 }
+
 function beautifyDisplayNum() {
   display.innerText = Number.parseFloat(display.innerText);
 }
+
 function appendDisplay(char) {
   if (isDisplayError()) clearDisplay();
   if (char === ".") {
@@ -92,10 +107,6 @@ function appendDisplay(char) {
   display.innerText += char;
 }
 
-function isUnaryOperator(op) {
-  return unaryOperators.includes(op);
-}
-
 function calculateUnary(e) {
   if (!isDisplayError()) {
     updateDisplay(calculator[e.target.id](getDisplayContent()));
@@ -103,16 +114,15 @@ function calculateUnary(e) {
 }
 
 function calculateBinary() {
-  if (numbers.length === 2 && operator.length === 1) {
+  if (numbers.length >= 2 && operator.length === 1) {
     let op = popOperator();
     let result;
     let num2 = popNum();
     let num1 = popNum();
-    console.log(num1 + " --- " + num2);
     result = calculator[op](num1, num2);
     allowEdit = false;
     updateDisplay(result);
-    console.log(numbers);
+    popNum(); // in case we have an unwanted number from previous result and no operator left.
   }
 }
 
@@ -126,6 +136,7 @@ function isDisplayError() {
 
 function getDigit(e) {
   if (!allowEdit) {
+    if (!isDisplayError()) pushNum();
     clearDisplay();
     allowEdit = true;
   }
@@ -133,17 +144,17 @@ function getDigit(e) {
 }
 
 function equals(e) {
-  if (operator.length > 0) {
+  if (operator.length === 1) {
     allowEdit = false;
-    pushNum(getDisplayContent());
+    pushNum();
     calculateBinary();
   }
 }
 
 function getBinaryOperator(e) {
   if (!isDisplayError()) {
-    pushNum(getDisplayContent());
-    if (operator.length > 0) calculateBinary(); // change #1
+    pushNum();
+    if (operator.length > 0) calculateBinary();
     pushOperator(e.target.id);
     allowEdit = false;
   } else clearDisplay();
