@@ -1,17 +1,8 @@
-// ! if display value is NaN (as a result of sqrt(-1)) pressing a digit changes the display value
-// ! to 0 , but then pressing a binary operator (e.g *) and a number (e.g 3) will not do the calculation
-// ! and still shows that digit (instead of 0 in this case).
-
-// fixed: can not calculate three consquetive calculations (without using = between them). could be the same
-//  as the previous bug?
-//  it seems that we lose the first binary operation's result when clicking the second binary operator.
-//  after one calculation and second input of a operator and at the third input of a number the getDigit
-//  function clears the screen, so the previous result is lost.
-
 let numbers = [];
 let operator = [];
 let allowEdit = true;
 const legalDisplayMaterial = "0123456789.";
+
 const calculator = {
   divide(num1, num2) {
     return num1 / num2;
@@ -163,8 +154,7 @@ function getBinaryOperator(e) {
 }
 
 function getKey(e) {
-  console.log(e);
-  e.preventDefault();
+  // e.preventDefault();
   if (isDisplayMaterial(e.key)) {
     getDigit(e);
   } else {
@@ -176,6 +166,7 @@ function getKey(e) {
         backSpace(e);
         break;
       case "/":
+        e.preventDefault();
         divideBtn.click();
         break;
       case "*":
@@ -188,9 +179,13 @@ function getKey(e) {
         subtractBtn.click();
         break;
       case "^":
+      case "p":
+      case "P":
         powBtn.click();
         break;
       case "%":
+      case "m":
+      case "M":
         moduloBtn.click();
         break;
       case "r":
@@ -226,6 +221,13 @@ const negateBtn = document.querySelector("#negate");
 document
   .querySelectorAll(".binary-operator")
   .forEach((btn) => btn.addEventListener("click", getBinaryOperator));
+
+document.querySelectorAll("button").forEach((btn) =>
+  btn.addEventListener("keyup", (e) => {
+    e.preventDefault();
+    e.target.blur();
+  })
+);
 
 document
   .querySelectorAll(".unary-operator")

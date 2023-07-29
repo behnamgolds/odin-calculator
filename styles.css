@@ -4,20 +4,15 @@ body {
   font-family: "Chakra Petch", sans-serif;
   background-color: #ffd900;
   margin: 2px;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  height: 99vh;
+  width: 95vw;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  /* align-items: stretch; */
+  justify-content: space-between;
 }
 
 main {
   flex: 1;
-  margin: auto;
-  width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -36,10 +31,7 @@ footer {
 
 a {
   text-decoration: none;
-  /* color: rgb(73, 177, 237); */
   color: rgb(255, 60, 0);
-
-  /* color: #fa980b; */
 }
 
 .calc-body {
@@ -47,8 +39,6 @@ a {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 50%;
-  min-height: 70%;
   border: 1px solid #5c5656;
   border-radius: 5px;
   padding: 5px;
@@ -56,6 +46,9 @@ a {
 }
 
 .calc-display {
+  overflow-y: scroll;
+  width: 22em;
+  height: 1.3em;
   border-radius: 5px;
   overflow-wrap: break-word;
   font-size: 1.5em;
@@ -70,28 +63,27 @@ a {
 }
 
 .calc-buttons {
-  min-width: 100%;
   flex: 1;
   display: flex;
+  min-width: 100%;
+  min-height: 100%;
 }
 
 .btn-column {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
 }
 
 button {
   border: 1px solid #5c5656;
-  /* color: #5c5656; */
   border-radius: 5px;
   font-family: inherit;
   font-size: 1.5em;
-  /* font-weight: bold; */
   flex: 1;
   margin: 2px;
+  min-width: 100px;
+  min-height: 50px;
 }
 
 button:hover {
@@ -100,4 +92,9 @@ button:hover {
 
 button:active {
   box-shadow: -1px -1px 7px #5c5656, 1px 1px 7px #5c5656;
+}
+
+button:disabled {
+  box-shadow: none;
+  background-color: rgb(216, 212, 212);
 }
