@@ -46,7 +46,7 @@ a {
 }
 
 .calc-display {
-  overflow-y: scroll;
+  overflow-y: auto;
   width: 22em;
   height: 1.3em;
   border-radius: 5px;
