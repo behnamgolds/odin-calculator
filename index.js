@@ -32,7 +32,6 @@ const calculator = {
 
 function pushNum() {
   numbers.push(getDisplayContent());
-  // updateDisplay();
   if (isDisplayError()) popNum();
 }
 

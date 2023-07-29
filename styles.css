@@ -5,10 +5,10 @@ body {
   background-color: #ffd900;
   margin: 2px;
   height: 99vh;
-  width: 95vw;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 }
 
 main {
